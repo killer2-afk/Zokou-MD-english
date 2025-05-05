@@ -1,0 +1,23 @@
+js
+module.exports = {
+  name: "tagall",
+  alias: ["toutlemonde", "everyone"],
+  category: "group",
+  desc: "Mentionne tous les membres du groupe",
+  async exec(msg, sock) {
+    if (!msg.isGroup) {
+      return sock.sendMessage(msg.from, { text: "Cette commande ne fonctionne que dans un groupe." }, { quoted: msg });
+    }
+
+    const groupMetadata = await sock.groupMetadata(msg.from);
+    const members = groupMetadata.participants.map(member => member.id);
+    const mentions = members.map(id => ({ mentionedJid: id }));
+    const text = members.map(m => `@m.split("@")[0]`).join(" ");
+
+    await sock.sendMessage(msg.from, 
+      text: `📢 Mention spéciale pour :{text}`,
+      mentions: members
+    }, { quoted: msg });
+  }
+};
+```
